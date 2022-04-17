@@ -4,7 +4,7 @@ Entry point and CLI implementation for terminal-mines.
 
 import click
 
-from game_logic import random_minefield, Minefield, GameState, input_loop, render, solve_game
+from game_logic import random_minefield, GameState, input_loop, render
 
 DIFFICULTY_PRESETS = {
     "balanced": (35, 20, 15),
@@ -45,10 +45,7 @@ class DifficultyParamType(click.ParamType):
 @click.command()
 @click.pass_context
 @click.argument("difficulty", default="balanced", type=DifficultyParamType())
-@click.option("--solve", is_flag=True, help="Watch the included AI attempt to solve the minefield.")
-@click.option("mines_file", "--mines", type=click.File(), help="Provide a file containing custom mine placements.")
-@click.option("--beta", is_flag=True, help="Enable experimental features.")
-def main(ctx, difficulty, solve, mines_file, beta):
+def main(ctx, difficulty):
     """
     Terminal Mines
 
@@ -83,41 +80,27 @@ def main(ctx, difficulty, solve, mines_file, beta):
     specified mines are outside the bounds of the game board they will be skipped. If a mines file is provided the
     "number of mines" portion of the difficulty setting will be ignored.
     """
-    if mines_file:
-        mines = set(map(lambda line: line.strip(), mines_file))
-        minefield = Minefield(difficulty[1], difficulty[2], mines)
-
-        if minefield.num_mines == 0:
-            ctx.fail("Mines file did not contain any valid mines")
-    else:
-        minefield = random_minefield(*difficulty)
-
-    if beta:
-        minefield.beta = beta
-
-    if solve:
-        solve_game(minefield)
-    else:
-        def handle_key(key):
-            if key == "w":
-                minefield.y = (minefield.y - 1) % minefield.height
-            elif key == "s":
-                minefield.y = (minefield.y + 1) % minefield.height
-            elif key == "a":
-                minefield.x = (minefield.x - 1) % minefield.width
-            elif key == "d":
-                minefield.x = (minefield.x + 1) % minefield.width
-            elif key == "e" or key == "'":
-                minefield.flag_cell(minefield.x, minefield.y)
-            elif key == "\n" or key == " ":
-                minefield.reveal_cell(minefield.x, minefield.y)
-            render(minefield)
-
-            if minefield.state != GameState.IN_PROGRESS:
-                ctx.exit(0)
-
+    minefield = random_minefield(*difficulty)
+    def handle_key(key):
+        if key == "w":
+            minefield.y = (minefield.y - 1) % minefield.height
+        elif key == "s":
+            minefield.y = (minefield.y + 1) % minefield.height
+        elif key == "a":
+            minefield.x = (minefield.x - 1) % minefield.width
+        elif key == "d":
+            minefield.x = (minefield.x + 1) % minefield.width
+        elif key == "e" or key == "'":
+            minefield.flag_cell(minefield.x, minefield.y)
+        elif key == "\n" or key == " ":
+            minefield.reveal_cell(minefield.x, minefield.y)
         render(minefield)
-        input_loop(handle_key)
+
+        if minefield.state != GameState.IN_PROGRESS:
+            ctx.exit(0)
+
+    render(minefield)
+    input_loop(handle_key)
 
 
 if __name__ == "__main__":
