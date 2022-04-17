@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-
 from mines import DIFFICULTY_PRESETS, DifficultyParamType
 from mines import main as main_function
 
@@ -54,7 +53,7 @@ class MinesTestCase(unittest.TestCase):
         self.assertRaises(BadParameter, difficulty_param_type_obj.convert, "101, 10,10", None, None)
 
 class Renderer(unittest.TestCase):
-    # INTEGRATION TEST 1 minefield and render_cell
+    # INTEGRATION TEST 1 minefield, cell and render_cell
     def test_render_cell_integration_minefield_normal_cell(self):
         from game_logic.renderer import render_cell
         from game_logic import random_minefield
@@ -156,3 +155,31 @@ class Renderer(unittest.TestCase):
         out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game won"
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
+
+
+
+class KeyboardListenerTest(unittest.TestCase):
+
+    @patch('builtins.print')
+    def test_demo_handler(self, mock_print):
+        from game_logic.keyboard_listener import demo_handler
+        demo_handler('test')
+        mock_print.assert_called_with("Processing 'test'")
+
+    def test_translate_key_letter_move(self):
+        from game_logic.keyboard_listener import translate_key
+        self.assertEqual(translate_key("A"), "a")
+        self.assertEqual(translate_key("a"), "a")
+
+    def test_translate_key_escape_reveal_move(self):
+        from game_logic.keyboard_listener import translate_key
+        self.assertEqual(translate_key("\r"), "\n")
+        self.assertEqual(translate_key("\x1b"), None)
+
+    def test_translate_key_arrow_move(self):
+        from game_logic.keyboard_listener import translate_key
+        self.assertEqual(translate_key("àH"), "w")
+        self.assertEqual(translate_key("àP"), "s")
+        self.assertEqual(translate_key("àK"), "a")
+        self.assertEqual(translate_key("àM"), "d")
+
