@@ -137,7 +137,7 @@ class Renderer(unittest.TestCase):
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
 
-    def test_gen_lines_win_game(self):
+    def test_gen_lines_lose_game(self):
         from game_logic.renderer import render, gen_lines
         from game_logic import random_minefield
         from game_logic.game_model import GameState
@@ -146,7 +146,6 @@ class Renderer(unittest.TestCase):
         out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game lost"
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
-
 
     def test_gen_lines_win_game(self):
         from game_logic.renderer import render, gen_lines
