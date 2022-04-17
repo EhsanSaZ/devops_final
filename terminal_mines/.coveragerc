@@ -3,3 +3,7 @@
 exclude_lines =
     if __name__ == .__main__.:
     main()
+
+[coverage:run]
+omit =
+    game_logic\__init__.py
