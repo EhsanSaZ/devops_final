@@ -54,7 +54,7 @@ class MinesTestCase(unittest.TestCase):
         self.assertRaises(BadParameter, difficulty_param_type_obj.convert, "101, 10,10", None, None)
 
 class Renderer(unittest.TestCase):
-    # INTEGRATION TEST
+    # INTEGRATION TEST 1 minefield and render_cell
     def test_render_cell_integration_minefield_normal_cell(self):
         from game_logic.renderer import render_cell
         from game_logic import random_minefield
@@ -127,3 +127,33 @@ class Renderer(unittest.TestCase):
         bg = "red"
         fg = fg_mapping.get(cell.state, None)
         self.assertEqual(render_cell(minefield, 0, 0), style(cell.state.value, bg=bg, fg=fg))
+
+    # INTEGRATION TEST 2 minefield and gen_lines
+    def test_gen_lines(self):
+        from game_logic.renderer import render, gen_lines
+        from game_logic import random_minefield
+        minefield = random_minefield(2, 3, 3)
+        out_put="┌───────┐\n│ [30m[102m?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Flags remaining: 2"
+        # print("\n".join(gen_lines(minefield)))
+        self.assertEqual("\n".join(gen_lines(minefield)), out_put)
+
+    def test_gen_lines_win_game(self):
+        from game_logic.renderer import render, gen_lines
+        from game_logic import random_minefield
+        from game_logic.game_model import GameState
+        minefield = random_minefield(2, 3, 3)
+        minefield.state = GameState.LOST
+        out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game lost"
+        # print("\n".join(gen_lines(minefield)))
+        self.assertEqual("\n".join(gen_lines(minefield)), out_put)
+
+
+    def test_gen_lines_win_game(self):
+        from game_logic.renderer import render, gen_lines
+        from game_logic import random_minefield
+        from game_logic.game_model import GameState
+        minefield = random_minefield(2, 3, 3)
+        minefield.state = GameState.WON
+        out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game won"
+        # print("\n".join(gen_lines(minefield)))
+        self.assertEqual("\n".join(gen_lines(minefield)), out_put)
