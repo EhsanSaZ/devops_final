@@ -22,31 +22,45 @@ fg_mapping = {
 }
 
 
+def render_cell(minefield, iter_x, iter_y):
+    cell = minefield.get_cell(iter_x, iter_y)
+
+    fg = fg_mapping.get(cell.state, None)
+    bg = None
+
+    if minefield.state == GameState.IN_PROGRESS and iter_x == minefield.x and iter_y == minefield.y:
+        bg = "bright_green"
+        fg = "black"  # Override the foreground color to make it more readable against the green background
+    elif minefield.state != GameState.IN_PROGRESS and cell.state == CellState.FLAGGED and not cell.is_mine:
+        bg = "red"  # Indicates incorrectly placed flag
+
+    return style(cell.state.value, bg=bg, fg=fg)
+
 def render(minefield):
     """
     Clears the screen and renders the current game state.
     """
     clear()
 
-    def render_cell(iter_x, iter_y):
-        cell = minefield.get_cell(iter_x, iter_y)
-
-        fg = fg_mapping.get(cell.state, None)
-        bg = None
-
-        if minefield.state == GameState.IN_PROGRESS and iter_x == minefield.x and iter_y == minefield.y:
-            bg = "bright_green"
-            fg = "black"            # Override the foreground color to make it more readable against the green background
-        elif minefield.state != GameState.IN_PROGRESS and cell.state == CellState.FLAGGED and not cell.is_mine:
-            bg = "red"                  # Indicates incorrectly placed flag
-
-        return style(cell.state.value, bg=bg, fg=fg)
+    # def render_cell(iter_x, iter_y):
+    #     cell = minefield.get_cell(iter_x, iter_y)
+    #
+    #     fg = fg_mapping.get(cell.state, None)
+    #     bg = None
+    #
+    #     if minefield.state == GameState.IN_PROGRESS and iter_x == minefield.x and iter_y == minefield.y:
+    #         bg = "bright_green"
+    #         fg = "black"            # Override the foreground color to make it more readable against the green background
+    #     elif minefield.state != GameState.IN_PROGRESS and cell.state == CellState.FLAGGED and not cell.is_mine:
+    #         bg = "red"                  # Indicates incorrectly placed flag
+    #
+    #     return style(cell.state.value, bg=bg, fg=fg)
 
     def gen_lines():
         yield chr(0x250C) + chr(0x2500) * (minefield.width * 2 + 1) + chr(0x2510)
 
         for iter_y in range(minefield.height):
-            iter_cells = (render_cell(iter_x, iter_y) for iter_x in range(minefield.width))
+            iter_cells = (render_cell(minefield, iter_x, iter_y) for iter_x in range(minefield.width))
             yield " ".join(chain(chr(0x2502), iter_cells, chr(0x2502)))
 
         yield chr(0x2514) + chr(0x2500) * (minefield.width * 2 + 1) + chr(0x2518)
