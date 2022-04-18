@@ -101,7 +101,6 @@ def main(ctx, difficulty):
     "number of mines" portion of the difficulty setting will be ignored.
     """
     minefield = random_minefield(*difficulty)
-
     key_handler = KeyHandler(minefield, ctx)
     render(minefield)
     input_loop(key_handler.handle_key)
