@@ -41,6 +41,26 @@ class DifficultyParamType(click.ParamType):
             except ValueError:
                 self.fail("a custom difficulty must be made of 3 positive integers separated by commas", param, ctx)
 
+class KeyHandler:
+    def __init__(self, minefield, ctx):
+        self.minefield = minefield
+        self.ctx = ctx
+    def handle_key(self, key):
+        if key == "w":
+            self.minefield.y = (self.minefield.y - 1) % self.minefield.height
+        elif key == "s":
+            self.minefield.y = (self.minefield.y + 1) % self.minefield.height
+        elif key == "a":
+            self.minefield.x = (self.minefield.x - 1) % self.minefield.width
+        elif key == "d":
+            self.minefield.x = (self.minefield.x + 1) % self.minefield.width
+        elif key == "e" or key == "'":
+            self.minefield.flag_cell(self.minefield.x, self.minefield.y)
+        elif key == "\n" or key == " ":
+            self.minefield.reveal_cell(self.minefield.x, self.minefield.y)
+        render(self.minefield)
+        if self.minefield.state != GameState.IN_PROGRESS:
+            self.ctx.exit(0)
 
 @click.command()
 @click.pass_context
@@ -81,26 +101,10 @@ def main(ctx, difficulty):
     "number of mines" portion of the difficulty setting will be ignored.
     """
     minefield = random_minefield(*difficulty)
-    def handle_key(key):
-        if key == "w":
-            minefield.y = (minefield.y - 1) % minefield.height
-        elif key == "s":
-            minefield.y = (minefield.y + 1) % minefield.height
-        elif key == "a":
-            minefield.x = (minefield.x - 1) % minefield.width
-        elif key == "d":
-            minefield.x = (minefield.x + 1) % minefield.width
-        elif key == "e" or key == "'":
-            minefield.flag_cell(minefield.x, minefield.y)
-        elif key == "\n" or key == " ":
-            minefield.reveal_cell(minefield.x, minefield.y)
-        render(minefield)
 
-        if minefield.state != GameState.IN_PROGRESS:
-            ctx.exit(0)
-
+    key_handler = KeyHandler(minefield, ctx)
     render(minefield)
-    input_loop(handle_key)
+    input_loop(key_handler.handle_key)
 
 
 if __name__ == "__main__":
