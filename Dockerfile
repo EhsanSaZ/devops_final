@@ -11,4 +11,5 @@ WORKDIR /usr/src/app
 # copy all the files to the container
 COPY . ./
 
+RUN pip3 install -r requirements.txt
 #CMD ["python3", "./tictactoe.py"]
