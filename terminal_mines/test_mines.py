@@ -263,3 +263,9 @@ class KeyboardListenerTest(unittest.TestCase):
         cell = minefield.get_cell(minefield.x, minefield.y)
         self.assertEqual(cell.state.value, CellState.FLAGGED.value)
 
+class CellTest(unittest.TestCase):
+    def test__repr__(self):
+        from game_logic.game_model import Cell
+        cell = Cell(True)
+        print(cell.__repr__())
+        self.assertEqual(cell.__repr__(), "Cell(True, ?)")
