@@ -56,7 +56,7 @@ class Minefield:
 
         self.rows = [[Cell("{},{}".format(x, y) in mines) for x in range(width)] for y in range(height)]
 
-        self.beta = False        # Enable beta features if set to True
+        # self.beta = False        # Enable beta features if set to True
 
     def __repr__(self):
         return "{}({}, {})".format(type(self).__name__, self.width, self.height)
@@ -142,13 +142,13 @@ class Minefield:
             else:
                 target.state = CellState(str(neighbor_mines))
             
-            if not recursing and self.beta:
-                # Check if the game has been won, based on revealed cells instead of flags
-                for cell in self.cells:
-                    if not cell.is_mine and cell.state == CellState.UNKNOWN:
-                        return
-
-                self.state = GameState.WON 
+            # if not recursing and self.beta:
+            #     # Check if the game has been won, based on revealed cells instead of flags
+            #     for cell in self.cells:
+            #         if not cell.is_mine and cell.state == CellState.UNKNOWN:
+            #             return
+            #
+            #     self.state = GameState.WON
 
 
     def flag_cell(self, x, y):
@@ -162,16 +162,22 @@ class Minefield:
             target.state = CellState.UNKNOWN
         elif target.state == CellState.UNKNOWN and self.flags_remaining > 0:
             target.state = CellState.FLAGGED
-
-            if not self.beta:
-                # Check if the game has been won
-                for cell in self.cells:
-                    if cell.is_mine and cell.state != CellState.FLAGGED:
-                        return
-                    elif not cell.is_mine and cell.state == CellState.FLAGGED:
-                        return
-
-                self.state = GameState.WON
+        # Check if the game has been won
+        for cell in self.cells:
+            if cell.is_mine and cell.state != CellState.FLAGGED:
+                return
+            elif not cell.is_mine and cell.state == CellState.FLAGGED:
+                return
+        # self.state = GameState.WON
+        #     if not self.beta:
+        #         # Check if the game has been won
+        #         for cell in self.cells:
+        #             if cell.is_mine and cell.state != CellState.FLAGGED:
+        #                 return
+        #             elif not cell.is_mine and cell.state == CellState.FLAGGED:
+        #                 return
+        #
+        #         self.state = GameState.WON
 
 
 def random_minefield(num_mines, width, height):
