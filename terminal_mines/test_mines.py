@@ -1,7 +1,8 @@
 import unittest
+from enum import Enum
 from unittest.mock import MagicMock, patch
 
-from mines import DIFFICULTY_PRESETS, DifficultyParamType
+from mines import DIFFICULTY_PRESETS, DifficultyParamType, KeyHandler
 from mines import main as main_function
 
 
@@ -182,4 +183,83 @@ class KeyboardListenerTest(unittest.TestCase):
         self.assertEqual(translate_key("àP"), "s")
         self.assertEqual(translate_key("àK"), "a")
         self.assertEqual(translate_key("àM"), "d")
+
+    # INTEGRATION TEST 5 minefield and key_handler
+    @patch('mines.render')
+    def test_handler_move_left(self, mock_render):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        mock_ctx = MagicMock()
+        mock_render.return_value = 0
+        minefield.x = 10
+        minefield.y = 10
+        coordinates = (minefield.x, minefield.y)
+        key_handler = KeyHandler(minefield, mock_ctx)
+        key_handler.handle_key("a")
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0]-1, coordinates[1]))
+
+    @patch('mines.render')
+    def test_handler_move_right(self, mock_render):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        mock_ctx = MagicMock()
+        mock_render.return_value = 0
+        minefield.x = 10
+        minefield.y = 10
+        coordinates = (minefield.x, minefield.y)
+        key_handler = KeyHandler(minefield, mock_ctx)
+        key_handler.handle_key("d")
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0]+1, coordinates[1]))
+
+    @patch('mines.render')
+    def test_handler_move_up(self, mock_render):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        mock_ctx = MagicMock()
+        mock_render.return_value = 0
+        minefield.x = 10
+        minefield.y = 10
+        coordinates = (minefield.x, minefield.y)
+        key_handler = KeyHandler(minefield, mock_ctx)
+        key_handler.handle_key("w")
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1]-1))
+
+    @patch('mines.render')
+    def test_handler_move_down(self, mock_render):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        mock_ctx = MagicMock()
+        mock_render.return_value = 0
+        minefield.x = 10
+        minefield.y = 10
+        coordinates = (minefield.x, minefield.y)
+        key_handler = KeyHandler(minefield, mock_ctx)
+        key_handler.handle_key("s")
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1]+1))
+
+    @patch('mines.render')
+    def test_handler_flag_cell(self, mock_render):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        mock_ctx = MagicMock()
+        mock_render.return_value = 0
+        minefield.x = 10
+        minefield.y = 10
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+        key_handler = KeyHandler(minefield, mock_ctx)
+        key_handler.handle_key("e")
+        cell = minefield.get_cell(minefield.x, minefield.y)
+        self.assertEqual(cell.state.value, CellState.FLAGGED.value)
 
