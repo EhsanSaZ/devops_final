@@ -19,9 +19,11 @@ class MinesTestCase(unittest.TestCase):
             "expert": (99, 16, 30)
         }
         self.assertEqual(difficulty_param_type_obj.convert("balanced", None, None), DIFFICULTY_PRESETS["balanced"])
-        self.assertEqual(difficulty_param_type_obj.convert("challenging", None, None),  DIFFICULTY_PRESETS["challenging"])
-        self.assertEqual(difficulty_param_type_obj.convert("easy", None, None),DIFFICULTY_PRESETS["easy"])
-        self.assertEqual(difficulty_param_type_obj.convert("intermediate", None, None), DIFFICULTY_PRESETS["intermediate"])
+        self.assertEqual(difficulty_param_type_obj.convert("challenging", None, None),
+                         DIFFICULTY_PRESETS["challenging"])
+        self.assertEqual(difficulty_param_type_obj.convert("easy", None, None), DIFFICULTY_PRESETS["easy"])
+        self.assertEqual(difficulty_param_type_obj.convert("intermediate", None, None),
+                         DIFFICULTY_PRESETS["intermediate"])
         self.assertEqual(difficulty_param_type_obj.convert("expert", None, None), DIFFICULTY_PRESETS["expert"])
 
     def test_difficulty_param_type_custom_difficulty(self):
@@ -52,6 +54,7 @@ class MinesTestCase(unittest.TestCase):
         difficulty_param_type_obj = DifficultyParamType()
         from click import BadParameter
         self.assertRaises(BadParameter, difficulty_param_type_obj.convert, "101, 10,10", None, None)
+
 
 class Renderer(unittest.TestCase):
     # INTEGRATION TEST 1 minefield, cell and render_cell
@@ -133,7 +136,7 @@ class Renderer(unittest.TestCase):
         from game_logic.renderer import render, gen_lines
         from game_logic import random_minefield
         minefield = random_minefield(2, 3, 3)
-        out_put="┌───────┐\n│ [30m[102m?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Flags remaining: 2"
+        out_put = "┌───────┐\n│ [30m[102m?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Flags remaining: 2"
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
 
@@ -143,7 +146,7 @@ class Renderer(unittest.TestCase):
         from game_logic.game_model import GameState
         minefield = random_minefield(2, 3, 3)
         minefield.state = GameState.LOST
-        out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game lost"
+        out_put = "┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game lost"
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
 
@@ -153,10 +156,9 @@ class Renderer(unittest.TestCase):
         from game_logic.game_model import GameState
         minefield = random_minefield(2, 3, 3)
         minefield.state = GameState.WON
-        out_put="┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game won"
+        out_put = "┌───────┐\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n│ ?[0m ?[0m ?[0m │\n└───────┘\n Game won"
         # print("\n".join(gen_lines(minefield)))
         self.assertEqual("\n".join(gen_lines(minefield)), out_put)
-
 
 
 class KeyboardListenerTest(unittest.TestCase):
@@ -196,7 +198,7 @@ class KeyboardListenerTest(unittest.TestCase):
         coordinates = (minefield.x, minefield.y)
         key_handler = KeyHandler(minefield, mock_ctx)
         key_handler.handle_key("a")
-        self.assertEqual((minefield.x, minefield.y), (coordinates[0]-1, coordinates[1]))
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0] - 1, coordinates[1]))
 
     @patch('mines.render')
     def test_handler_move_right(self, mock_render):
@@ -209,7 +211,7 @@ class KeyboardListenerTest(unittest.TestCase):
         coordinates = (minefield.x, minefield.y)
         key_handler = KeyHandler(minefield, mock_ctx)
         key_handler.handle_key("d")
-        self.assertEqual((minefield.x, minefield.y), (coordinates[0]+1, coordinates[1]))
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0] + 1, coordinates[1]))
 
     @patch('mines.render')
     def test_handler_move_up(self, mock_render):
@@ -222,7 +224,7 @@ class KeyboardListenerTest(unittest.TestCase):
         coordinates = (minefield.x, minefield.y)
         key_handler = KeyHandler(minefield, mock_ctx)
         key_handler.handle_key("w")
-        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1]-1))
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1] - 1))
 
     @patch('mines.render')
     def test_handler_move_down(self, mock_render):
@@ -235,7 +237,7 @@ class KeyboardListenerTest(unittest.TestCase):
         coordinates = (minefield.x, minefield.y)
         key_handler = KeyHandler(minefield, mock_ctx)
         key_handler.handle_key("s")
-        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1]+1))
+        self.assertEqual((minefield.x, minefield.y), (coordinates[0], coordinates[1] + 1))
 
     @patch('mines.render')
     def test_handler_flag_cell(self, mock_render):
@@ -245,6 +247,7 @@ class KeyboardListenerTest(unittest.TestCase):
         mock_render.return_value = 0
         minefield.x = 10
         minefield.y = 10
+
         class CellState(Enum):
             UNKNOWN = "?"
             SAFE = "-"
@@ -258,14 +261,187 @@ class KeyboardListenerTest(unittest.TestCase):
             WARN8 = "8"
             FLAGGED = "F"
             EXPLODED = "X"
+
         key_handler = KeyHandler(minefield, mock_ctx)
         key_handler.handle_key("e")
         cell = minefield.get_cell(minefield.x, minefield.y)
         self.assertEqual(cell.state.value, CellState.FLAGGED.value)
 
+
 class CellTest(unittest.TestCase):
     def test__repr__(self):
         from game_logic.game_model import Cell
         cell = Cell(True)
-        print(cell.__repr__())
         self.assertEqual(cell.__repr__(), "Cell(True, ?)")
+
+
+class Minefield(unittest.TestCase):
+    def test___repr__(self):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        self.assertEqual(minefield.__repr__(), "Minefield(20, 15)")
+
+    def test_num_mines(self):
+        from game_logic import random_minefield
+        minefield = random_minefield(35, 20, 15)
+        self.assertEqual(minefield.num_mines, 35)
+
+    def test_cords_and_cells(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        cell = minefield.get_cell(0, 0)
+        cell.is_mine = False
+        cords_and_cell_0 = list(minefield.cords_and_cells)[0]
+        self.assertEqual((cords_and_cell_0[0], cords_and_cell_0[0]), (0, 0))
+        self.assertIsInstance(cords_and_cell_0[2], Cell)
+
+    def test_get_cell_valid_index(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        cell = minefield.get_cell(0, 0)
+        self.assertIsInstance(cell, Cell)
+
+    def test_get_cell_invalid_index(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        self.assertRaises(IndexError, minefield.get_cell, 6, 0)
+
+    # INTEGRATION TEST 3 minefield and cell to flag a cell
+    def test_flag_cell(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        cell = minefield.get_cell(0, 0)
+
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+
+        # cell.state = CellState.FLAGGED
+        minefield.flag_cell(0, 0)
+        self.assertEqual(minefield.get_cell(0, 0).state.value, CellState.FLAGGED.value)
+
+    def test_unflag_cell(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        cell = minefield.get_cell(0, 0)
+
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+
+        minefield.flag_cell(0, 0)
+        minefield.flag_cell(0, 0)
+        self.assertEqual(minefield.get_cell(0, 0).state.value, CellState.UNKNOWN.value)
+
+    # INTEGRATION TEST 4 minefield and cell to reveal a cell
+    def test_reveal_cell_safe_neighbours(self):
+        from game_logic import random_minefield, Minefield
+        from game_logic.game_model import Cell
+        mines = set()
+        mines.add("{},{}".format(4, 4))
+
+        minefield = Minefield(5, 5, mines)
+        ismine_mock = False
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+
+        minefield.reveal_cell(0, 0)
+        # self.assertEqual(minefield.reveal_cell(0, 0), None)
+        self.assertEqual(minefield.get_cell(0, 0).state.value, CellState.SAFE.value)
+
+    def test_reveal_cell_mine_neighbours(self):
+        from game_logic import random_minefield, Minefield
+        from game_logic.game_model import Cell
+        mines = set()
+        mines.add("{},{}".format(0, 1))
+
+        minefield = Minefield(5, 5, mines)
+        ismine_mock = False
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+
+        minefield.reveal_cell(0, 0)
+        # self.assertEqual(minefield.reveal_cell(0, 0), None)
+        self.assertEqual(minefield.get_cell(0, 0).state.value, CellState.WARN1.value)
+
+    def test_reveal_flagged_cell(self):
+        from game_logic import random_minefield
+        from game_logic.game_model import Cell
+        minefield = random_minefield(5, 5, 5)
+        minefield.flag_cell(0, 0)
+        self.assertEqual(minefield.reveal_cell(0, 0), None)
+
+    def test_reveal_mine_cell(self):
+        from game_logic import random_minefield, Minefield
+        from game_logic.game_model import Cell
+        mines = set()
+        mines.add("{},{}".format(0, 0))
+
+        minefield = Minefield(5, 5, mines)
+
+        class CellState(Enum):
+            UNKNOWN = "?"
+            SAFE = "-"
+            WARN1 = "1"
+            WARN2 = "2"
+            WARN3 = "3"
+            WARN4 = "4"
+            WARN5 = "5"
+            WARN6 = "6"
+            WARN7 = "7"
+            WARN8 = "8"
+            FLAGGED = "F"
+            EXPLODED = "X"
+
+        # cell = minefield.get_cell(0, 0)
+        # cell.is_mine = True
+        minefield.reveal_cell(0, 0)
+        # self.assertEqual(minefield.reveal_cell(0, 0), None)
+        self.assertEqual(minefield.get_cell(0, 0).state.value, CellState.EXPLODED.value)

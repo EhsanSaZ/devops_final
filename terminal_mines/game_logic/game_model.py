@@ -168,7 +168,7 @@ class Minefield:
                 return
             elif not cell.is_mine and cell.state == CellState.FLAGGED:
                 return
-        # self.state = GameState.WON
+        self.state = GameState.WON
         #     if not self.beta:
         #         # Check if the game has been won
         #         for cell in self.cells:
